@@ -34,7 +34,11 @@ public class uiController : MonoBehaviour
     }
 
     public void reloadLevel() {
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+    
+    public void nextLevel() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
     public void quitGame() {

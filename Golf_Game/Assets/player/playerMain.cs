@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class playerMain : MonoBehaviour
@@ -9,6 +10,8 @@ public class playerMain : MonoBehaviour
     private float dir;
     [Range(0, 1)]
     public float power = 1f;
+
+    private Rigidbody2D rb;
     
     private float speed;
     private int strokes;
@@ -46,6 +49,7 @@ public class playerMain : MonoBehaviour
         statusAffectNoClimb = false;
 
         myUIController = GameObject.FindGameObjectsWithTag("UI")[0].GetComponent<uiController>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     private void Update() {
@@ -66,18 +70,21 @@ public class playerMain : MonoBehaviour
 
         if (Input.GetButtonDown("Fire1"))
         {
-            Debug.Log("fire");
+            // Debug.Log("fire");
 
-            
-            GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
             if (Input.GetAxis("Horizontal") < 0)
             {
-                GetComponent<Rigidbody2D>().AddForce(transform.TransformDirection(Vector2.up) * (dir * power), ForceMode2D.Impulse);
+                rb.AddForce(transform.TransformDirection(Vector2.up) * (dir * power), ForceMode2D.Impulse);
             }
             else
             {
-                GetComponent<Rigidbody2D>().AddForce(transform.TransformDirection(-Vector2.up) * (dir * power), ForceMode2D.Impulse);
+                rb.AddForce(transform.TransformDirection(-Vector2.up) * (dir * power), ForceMode2D.Impulse);
             }
         } 
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+
     }
 }

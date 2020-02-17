@@ -3,8 +3,13 @@ using UnityEngine.InputSystem;
 
 public class playerMain : MonoBehaviour
 {
-    private InputControllerPlayer controls;
-
+    private float direction;
+    private bool moving;
+    private Vector3 currentTarget;
+    private float dir;
+    [Range(0, 1)]
+    public float power = 1f;
+    
     private float speed;
     private int strokes;
     private Vector2 move;
@@ -29,7 +34,6 @@ public class playerMain : MonoBehaviour
     public uiController MyUIController { get => myUIController; set => myUIController = value; }
 
     private void Awake() {
-        controls = new InputControllerPlayer();
 
         speed = 15.0f;
         strokes = 15;
@@ -42,27 +46,38 @@ public class playerMain : MonoBehaviour
         statusAffectNoClimb = false;
 
         myUIController = GameObject.FindGameObjectsWithTag("UI")[0].GetComponent<uiController>();
-
-        controls.playerControls.move.performed += ctx => move = ctx.ReadValue<Vector2>();
-        controls.playerControls.move.canceled += ctx => move = Vector2.zero;
     }
 
     private void Update() {
+        Move();
+        Vector3 forward = transform.TransformDirection(Vector2.up) * 100;
+        Debug.DrawRay(transform.position, forward, Color.white); //uncomment this to see the raycast in the scenes
+
+        
         if(strokes <= 0) {
             myUIController.showFailCase();
         }
     }
+    
+    void Move()
+    {
+        dir = Mathf.Atan2(-Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.AngleAxis(dir, Vector3.forward);
 
-    private void FixedUpdate() {
-        Vector2 m = move * speed * Time.deltaTime;
-        this.gameObject.transform.Translate(m, Space.World);
-    }
+        if (Input.GetButtonDown("Fire1"))
+        {
+            Debug.Log("fire");
 
-    public void OnEnable() {
-        controls.playerControls.Enable();
-    }
-
-    public void OnDisable() {
-        controls.playerControls.Disable();
+            
+            GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
+            if (Input.GetAxis("Horizontal") < 0)
+            {
+                GetComponent<Rigidbody2D>().AddForce(transform.TransformDirection(Vector2.up) * (dir * power), ForceMode2D.Impulse);
+            }
+            else
+            {
+                GetComponent<Rigidbody2D>().AddForce(transform.TransformDirection(-Vector2.up) * (dir * power), ForceMode2D.Impulse);
+            }
+        } 
     }
 }

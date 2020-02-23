@@ -69,8 +69,8 @@ public class sawBlade : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision) {
         if (string.Compare("Player", collision.transform.tag) == 0) {
-            collision.gameObject.GetComponent<playerMain>().MyUIController.showFailCase();
-            Destroy(collision.gameObject);
+            //collision.gameObject.GetComponent<playerMain>().MyUIController.showFailCase();
+            //Destroy(collision.gameObject);
         }
     }
 }

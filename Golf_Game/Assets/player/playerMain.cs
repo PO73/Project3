@@ -15,6 +15,8 @@ public class playerMain : MonoBehaviour
     
     private float speed;
     private int strokes;
+    public int strokeMaxForLevel;
+    public AudioSource strokeSound;
     private Vector2 move;
 
     private bool statusAffectEnlarge;
@@ -39,7 +41,8 @@ public class playerMain : MonoBehaviour
     private void Awake() {
 
         speed = 15.0f;
-        strokes = 15;
+        strokes = 0;
+        //strokeMaxForLevel = 0;
 
         statusAffectEnlarge = false;
         statusAffectShrink = false;
@@ -55,10 +58,10 @@ public class playerMain : MonoBehaviour
     private void Update() {
         Move();
         Vector3 forward = transform.TransformDirection(Vector2.up) * 100;
-        Debug.DrawRay(transform.position, forward, Color.white); //uncomment this to see the raycast in the scenes
+        //Debug.DrawRay(transform.position, forward, Color.white); //uncomment this to see the raycast in the scenes
 
         
-        if(strokes <= 0) {
+        if(strokes > strokeMaxForLevel) {
             myUIController.showFailCase();
         }
     }
@@ -70,7 +73,8 @@ public class playerMain : MonoBehaviour
 
         if (Input.GetButtonDown("Fire1"))
         {
-            // Debug.Log("fire");
+            strokes += 1;
+            strokeSound.Play();
 
             if (Input.GetAxis("Horizontal") < 0)
             {

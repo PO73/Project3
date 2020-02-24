@@ -1,6 +1,14 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
+enum PowerLevel
+{
+    Low = 1,
+    Medium = 2,
+    High = 3
+}
 
 public class playerMain : MonoBehaviour
 {
@@ -8,9 +16,20 @@ public class playerMain : MonoBehaviour
     private bool moving;
     private Vector3 currentTarget;
     private float dir;
+    
     [Range(0, 1)]
-    public float power = 1f;
+    public float power = 0.15f;
+    public float ballSpeed;
 
+    public Sprite plainSprite;
+    public Sprite lowSprite;
+    public Sprite medSprite;
+    public Sprite highSprite;
+
+    private SpriteRenderer arrow;
+    private bool selectingPowerLevel = false;
+    PowerLevel currentPowerLevel = PowerLevel.Low;
+    
     private Rigidbody2D rb;
     
     private float speed;
@@ -53,6 +72,7 @@ public class playerMain : MonoBehaviour
 
         myUIController = GameObject.FindGameObjectsWithTag("UI")[0].GetComponent<uiController>();
         rb = GetComponent<Rigidbody2D>();
+        arrow = transform.Find("Arrow").GetComponent<SpriteRenderer>();
     }
 
     private void Update() {
@@ -60,7 +80,8 @@ public class playerMain : MonoBehaviour
         Vector3 forward = transform.TransformDirection(Vector2.up) * 100;
         //Debug.DrawRay(transform.position, forward, Color.white); //uncomment this to see the raycast in the scenes
 
-        
+        ballSpeed = GetComponent<Rigidbody2D>().velocity.magnitude;
+
         if(strokes > strokeMaxForLevel) {
             myUIController.showFailCase();
         }
@@ -71,24 +92,77 @@ public class playerMain : MonoBehaviour
         dir = Mathf.Atan2(-Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.AngleAxis(dir, Vector3.forward);
 
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButtonDown("Fire1") && !selectingPowerLevel)
         {
-            strokes += 1;
-            strokeSound.Play();
 
-            if (Input.GetAxis("Horizontal") < 0)
+            StartCoroutine(GetPowerLevel());
+            selectingPowerLevel = true;
+        }
+        else
+        {
+            if (ballSpeed < 1f)
             {
-                rb.AddForce(transform.TransformDirection(Vector2.up) * (dir * power), ForceMode2D.Impulse);
+                rb.velocity = Vector2.zero;
+                rb.angularVelocity = 0f;
             }
-            else
-            {
-                rb.AddForce(transform.TransformDirection(-Vector2.up) * (dir * power), ForceMode2D.Impulse);
-            }
-        } 
+        }
+
     }
 
-    private void OnCollisionEnter2D(Collision2D other)
+    IEnumerator GetPowerLevel()
     {
+        bool gotLevel = false;
+        arrow.sprite = lowSprite;
+        currentPowerLevel = PowerLevel.Low;
 
+
+        while (!gotLevel)
+        {
+            yield return new WaitForSeconds(1);
+            IncrementLevel();
+            
+            if (Input.GetButtonDown("Fire2"))
+            {
+                Debug.Log("selected");
+                gotLevel = true;
+            }
+        }
+        
+        strokes += 1;
+        strokeSound.Play();
+
+        float newPower = power * (int) currentPowerLevel;
+
+        if (Input.GetAxis("Horizontal") < 0)
+        {
+            rb.AddForce(transform.TransformDirection(Vector2.up) * (dir > 1 ? (dir * newPower) : newPower), ForceMode2D.Impulse);
+        }
+        else
+        {
+            rb.AddForce(transform.TransformDirection(-Vector2.up) * (dir < 1 ? (dir * newPower) : newPower), ForceMode2D.Impulse);
+        }
+
+        arrow.sprite = plainSprite;
+        selectingPowerLevel = false;
     }
+
+    void IncrementLevel()
+    {
+        switch (currentPowerLevel)
+        {
+            case PowerLevel.Low:
+                arrow.sprite = medSprite;
+                currentPowerLevel = PowerLevel.Medium;
+                break;
+            case PowerLevel.Medium:
+                arrow.sprite = highSprite;
+                currentPowerLevel = PowerLevel.High;
+                break;
+            case PowerLevel.High:
+                arrow.sprite = lowSprite;
+                currentPowerLevel = PowerLevel.Low;
+                break;
+        }
+    }
+    
 }

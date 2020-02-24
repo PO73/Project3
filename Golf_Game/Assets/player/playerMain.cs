@@ -18,7 +18,7 @@ public class playerMain : MonoBehaviour
     private float dir;
     
     [Range(0, 1)]
-    public float power = 0.15f;
+    public float power = 0.3f;
     public float ballSpeed;
 
     public Sprite plainSprite;
@@ -29,6 +29,7 @@ public class playerMain : MonoBehaviour
     private SpriteRenderer arrow;
     private bool selectingPowerLevel = false;
     PowerLevel currentPowerLevel = PowerLevel.Low;
+    bool gotLevel = false;
     
     private Rigidbody2D rb;
     
@@ -85,6 +86,11 @@ public class playerMain : MonoBehaviour
         if(strokes > strokeMaxForLevel) {
             myUIController.showFailCase();
         }
+        
+        if (Input.GetButtonDown("Fire2"))
+        {
+            gotLevel = true;
+        }
     }
     
     void Move()
@@ -111,7 +117,7 @@ public class playerMain : MonoBehaviour
 
     IEnumerator GetPowerLevel()
     {
-        bool gotLevel = false;
+        gotLevel = false;
         arrow.sprite = lowSprite;
         currentPowerLevel = PowerLevel.Low;
 
@@ -120,12 +126,6 @@ public class playerMain : MonoBehaviour
         {
             yield return new WaitForSeconds(1);
             IncrementLevel();
-            
-            if (Input.GetButtonDown("Fire2"))
-            {
-                Debug.Log("selected");
-                gotLevel = true;
-            }
         }
         
         strokes += 1;

@@ -110,21 +110,21 @@ public class playerMain : MonoBehaviour
     IEnumerator GetPowerLevel()
     {
         gotLevel = false;
-        arrow.sprite = lowSprite;
-        currentPowerLevel = PowerLevel.Low;
+        arrow.sprite = highSprite;
+        currentPowerLevel = PowerLevel.High;
 
 
         while (!gotLevel)
         {
-            yield return new WaitForSeconds(1);
             IncrementLevel();
+            yield return new WaitForSeconds(1);
         }
         
         strokes += 1;
         strokeSound.Play();
 
         float newPower = power * (int) currentPowerLevel;
-
+        Debug.Log(newPower);
         if (Input.GetAxis("Horizontal") < 0)
         {
             rb.AddForce(transform.TransformDirection(Vector2.up) * (dir > 1 ? (dir * newPower) : newPower), ForceMode2D.Impulse);

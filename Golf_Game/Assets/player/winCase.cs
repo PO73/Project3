@@ -8,7 +8,7 @@ public class winCase : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         float ballSpeed = collision.gameObject.GetComponent<Rigidbody2D>().velocity.magnitude;
-        if (ballSpeed > maxBallSpeed)
+        if (ballSpeed < maxBallSpeed)
         {
             sound.Play();
             collision.gameObject.GetComponent<playerMain>().MyUIController.showWinCase();

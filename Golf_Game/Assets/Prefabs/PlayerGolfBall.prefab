@@ -135,7 +135,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   power: 0.3
-  strokeMaxForLevel: 3
+  ballSpeed: 0
+  plainSprite: {fileID: 21300000, guid: fd5c8fff16a2fcd49aab6064a9817375, type: 3}
+  lowSprite: {fileID: 21300000, guid: 3cf68249fd694fc429eb1d1497860df1, type: 3}
+  medSprite: {fileID: 21300000, guid: 51456ad245d9936488a674d0c6253fa3, type: 3}
+  highSprite: {fileID: 21300000, guid: e50b89371f056a748975734a347dfd68, type: 3}
+  strokeMaxForLevel: 2
   strokeSound: {fileID: 2020841287}
 --- !u!82 &2020841287
 AudioSource:

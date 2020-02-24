@@ -18,7 +18,7 @@ public class playerMain : MonoBehaviour
     private float dir;
     
     [Range(0, 1)]
-    public float power = 0.3f;
+    public float power = 0.1f;
     public float ballSpeed;
 
     public Sprite plainSprite;
@@ -104,14 +104,6 @@ public class playerMain : MonoBehaviour
             StartCoroutine(GetPowerLevel());
             selectingPowerLevel = true;
         }
-        else
-        {
-            if (ballSpeed < 1f)
-            {
-                rb.velocity = Vector2.zero;
-                rb.angularVelocity = 0f;
-            }
-        }
 
     }
 
@@ -144,6 +136,14 @@ public class playerMain : MonoBehaviour
 
         arrow.sprite = plainSprite;
         selectingPowerLevel = false;
+
+        yield return new WaitForSeconds(5);
+        if (ballSpeed < 1f)
+        {
+                rb.velocity = Vector2.zero;
+                rb.angularVelocity = 0f;
+        }
+        
     }
 
     void IncrementLevel()
